@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#3f51b5" />
+  <title>Spext</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Spext</h1>
+    <div class="header-actions">
+      <button id="notesToggleBtn" title="Notes">☰</button>
+      <button id="settingsBtn" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main id="recordView">
+    <p id="status">Loading Whisper model…</p>
+
+    <button id="micBtn" disabled>
+      <span id="micIcon">🎤</span>
+    </button>
+    <p id="micLabel">Loading…</p>
+
+    <section class="card">
+      <h2>Transcript</h2>
+      <p id="transcript">Your transcript will appear here.</p>
+    </section>
+
+    <button id="saveBtn" disabled>Save note</button>
+  </main>
+
+  <main id="notesView" hidden>
+    <button id="backBtn" class="link-btn">← Back</button>
+    <h2>Notes</h2>
+    <input id="searchInput" type="search" placeholder="Search notes…" />
+    <ul id="notesList"></ul>
+    <p id="emptyState" hidden>No notes yet.</p>
+  </main>
+
+  <main id="detailView" hidden>
+    <button id="detailBackBtn" class="link-btn">← Back to list</button>
+    <input id="detailTitle" type="text" />
+    <textarea id="detailContent" rows="20"></textarea>
+    <div class="actions">
+      <button id="shareBtn">Share</button>
+      <button id="deleteBtn" class="danger">Delete</button>
+    </div>
+  </main>
+
+  <main id="settingsView" hidden>
+    <button id="settingsBackBtn" class="link-btn">← Back</button>
+    <h2>Settings</h2>
+
+    <section class="card">
+      <h3>Storage</h3>
+      <p><strong id="noteCountText">0 notes</strong> saved in this browser.</p>
+      <p class="muted">All recordings, transcripts, and notes stay on your device. Nothing is sent to any server (after the one-time Whisper model download).</p>
+    </section>
+
+    <section class="card">
+      <h3>Export</h3>
+      <p>Download all notes as a ZIP of Markdown files.</p>
+      <button id="exportBtn">Export all notes</button>
+      <p id="exportStatus" class="muted" hidden></p>
+    </section>
+
+    <section class="card">
+      <h3>About</h3>
+      <p><strong>Spext Web v1.0</strong></p>
+      <p class="muted">On-device dictation and notes for German + English. Whisper for speech-to-text.</p>
+      <button id="licensesBtn">Licenses and credits</button>
+    </section>
+
+    <section class="card">
+      <h3>Install</h3>
+      <p>You can install Spext to your home screen for offline use.</p>
+      <button id="installBtn" disabled>Install (or use browser menu)</button>
+      <p class="muted">In Chrome on Android: menu → "Install app". On iOS Safari: share → "Add to Home Screen".</p>
+    </section>
+  </main>
+
+  <div id="licensesDialog" class="dialog" hidden>
+    <div class="dialog-content">
+      <h2>Licenses</h2>
+      <p><strong>OpenAI Whisper</strong> — MIT License. Speech-to-text model.</p>
+      <p><strong>transformers.js</strong> — Apache 2.0. WASM runtime for browser ML.</p>
+      <p><strong>Spext</strong> — For internal use at everphone. Do not redistribute or modify without permission.</p>
+      <button id="licensesCloseBtn">Close</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

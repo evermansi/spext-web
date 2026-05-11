@@ -1,0 +1,205 @@
+:root {
+  --primary: #3f51b5;
+  --primary-dark: #303f9f;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --on-surface: #1a1a1a;
+  --on-surface-muted: #6b6b6b;
+  --error: #d32f2f;
+  --border: #e0e0e0;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--on-surface);
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 { margin: 0; font-size: 1.5rem; }
+header button {
+  background: none; border: none; font-size: 1.5rem; cursor: pointer;
+  padding: 4px 8px;
+}
+.header-actions { display: flex; gap: 4px; }
+
+h3 { margin: 0 0 8px 0; font-size: 1rem; }
+.muted { color: var(--on-surface-muted); font-size: 0.85rem; }
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.dialog[hidden] { display: none; }
+.dialog-content {
+  background: var(--surface);
+  padding: 24px;
+  border-radius: var(--radius);
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.dialog-content h2 { margin: 0 0 16px 0; }
+.dialog-content p { margin: 0 0 12px 0; font-size: 0.9rem; }
+
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+
+main[hidden] {
+  display: none !important;
+}
+
+#status, #micLabel {
+  text-align: center;
+  color: var(--on-surface-muted);
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+#micBtn {
+  align-self: center;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+}
+#micBtn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+#micBtn.recording {
+  background: var(--error);
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid var(--border);
+  min-height: 120px;
+}
+.card h2 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: var(--on-surface-muted);
+}
+.card p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+button:not(#micBtn) {
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+button:not(#micBtn):disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+button.danger { background: var(--error); }
+button.link-btn {
+  background: none;
+  color: var(--primary);
+  padding: 8px;
+  text-align: left;
+  font-weight: 400;
+  width: fit-content;
+}
+
+input[type="text"], input[type="search"], textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--surface);
+}
+
+#notesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#notesList li {
+  background: var(--surface);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+#notesList li:hover { background: #f5f5f5; }
+#notesList .note-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+#notesList .note-preview {
+  color: var(--on-surface-muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#notesList .note-date {
+  font-size: 0.75rem;
+  color: var(--on-surface-muted);
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.actions button { flex: 1; }
+
+textarea { font-family: inherit; line-height: 1.5; resize: vertical; }
