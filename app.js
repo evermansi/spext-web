@@ -116,20 +116,34 @@ async function dbGet(id) {
 }
 
 // ---- Whisper load ----
+// Large-v3 Turbo: highest quality multilingual model that fits in ~1.5 GB.
+// Picked for desktop-first use (Mac + Windows browsers have plenty of RAM).
+const WHISPER_MODEL = 'onnx-community/whisper-large-v3-turbo';
+
 async function loadWhisper() {
+  // Detect WebGPU. Available in Chrome/Edge on Mac M-series and most Windows GPUs.
+  // Falls back to CPU/WASM if not supported (Safari, older browsers).
+  const useWebGPU = !!navigator.gpu;
+  const device = useWebGPU ? 'webgpu' : 'wasm';
+  const dtype = useWebGPU ? 'fp16' : 'q8';
+
   try {
-    statusEl.textContent = 'Loading Whisper model (~75 MB, one-time)…';
+    statusEl.textContent = `Loading Whisper Large-v3 Turbo (~1.5 GB, one-time) — ${device.toUpperCase()}…`;
     transcriber = await pipeline(
       'automatic-speech-recognition',
-      'Xenova/whisper-tiny',
-      { progress_callback: (p) => {
-        if (p.status === 'progress' && p.file?.endsWith('.onnx')) {
-          const pct = Math.round((p.loaded / p.total) * 100);
-          statusEl.textContent = `Loading Whisper model… ${pct}%`;
+      WHISPER_MODEL,
+      {
+        device,
+        dtype,
+        progress_callback: (p) => {
+          if (p.status === 'progress' && p.file?.endsWith('.onnx')) {
+            const pct = Math.round((p.loaded / p.total) * 100);
+            statusEl.textContent = `Loading Whisper… ${pct}% (${device.toUpperCase()})`;
+          }
         }
-      }}
+      }
     );
-    statusEl.textContent = 'Whisper ready. Tap mic to record.';
+    statusEl.textContent = `Whisper ready. ${useWebGPU ? '⚡ GPU accelerated.' : 'CPU mode.'}`;
     micBtn.disabled = false;
     micLabel.textContent = 'Tap to record';
   } catch (err) {
