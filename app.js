@@ -39,6 +39,7 @@ const searchInput = document.getElementById('searchInput');
 const detailTitle = document.getElementById('detailTitle');
 const detailContent = document.getElementById('detailContent');
 const shareBtn = document.getElementById('shareBtn');
+const downloadBtn = document.getElementById('downloadBtn');
 const deleteBtn = document.getElementById('deleteBtn');
 
 // ---- State ----
@@ -309,6 +310,22 @@ shareBtn.addEventListener('click', async () => {
     await navigator.clipboard.writeText(detailContent.value);
     alert('Copied to clipboard');
   }
+});
+
+downloadBtn.addEventListener('click', async () => {
+  if (!currentNoteId) return;
+  const note = await dbGet(currentNoteId);
+  if (!note) return;
+  const md = `# ${note.title}\n\n*Created: ${new Date(note.createdAt).toISOString()}*\n${note.language ? `*Language: ${note.language}*\n` : ''}\n${note.content}\n`;
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const safeTitle = note.title.replace(/[^a-zA-Z0-9 _-]/g, '').trim().slice(0, 60) || `note-${note.id}`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${safeTitle}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 });
 
 deleteBtn.addEventListener('click', async () => {
