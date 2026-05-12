@@ -1,12 +1,15 @@
 :root {
-  --primary: #3f51b5;
-  --primary-dark: #303f9f;
-  --bg: #fafafa;
+  /* everphone palette */
+  --primary: #2D6356;         /* everphone teal-green (hero background) */
+  --primary-dark: #1F4940;    /* darker shade for hover/active */
+  --primary-light: #C5E0CC;   /* mint accent (decorative dots) */
+  --bg: #F5F7F5;              /* warm off-white */
   --surface: #ffffff;
-  --on-surface: #1a1a1a;
-  --on-surface-muted: #6b6b6b;
-  --error: #d32f2f;
-  --border: #e0e0e0;
+  --on-primary: #ffffff;
+  --on-surface: #1a2724;
+  --on-surface-muted: #6b7a76;
+  --error: #b3261e;
+  --border: #d9e1dc;
   --radius: 12px;
 }
 
@@ -95,7 +98,7 @@ main[hidden] {
   font-size: 3rem;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
-  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+  box-shadow: 0 4px 16px rgba(45, 99, 86, 0.35);
 }
 #micBtn:disabled {
   background: #bdbdbd;
