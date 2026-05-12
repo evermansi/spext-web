@@ -1,7 +1,7 @@
 // Minimal Service Worker for offline support.
 // Caches app shell + Whisper model files on first run.
 
-const CACHE = 'spext-v1';
+const CACHE = 'spext-v3-lang-picker';
 const SHELL = [
   './',
   './index.html',

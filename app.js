@@ -51,6 +51,16 @@ let isRecording = false;
 let rawTranscript = '';
 let detectedLanguage = '';
 let currentNoteId = null;
+let selectedLanguage = 'auto'; // 'auto', 'german', 'english'
+
+// Language picker behavior.
+document.querySelectorAll('.lang-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedLanguage = btn.dataset.lang;
+  });
+});
 
 // ---- IndexedDB ----
 const DB_NAME = 'spext';
@@ -199,13 +209,12 @@ async function onRecordingStopped() {
   detectedLangEl.hidden = true;
 
   try {
-    // Transcribe in whatever language was spoken (German → German, English → English).
-    const result = await transcriber(float32, {
-      task: 'transcribe',
-      return_language: true
-    });
+    // Transcribe in the selected language. "auto" lets Whisper detect; explicit values force it.
+    const options = { task: 'transcribe', return_language: true };
+    if (selectedLanguage !== 'auto') options.language = selectedLanguage;
+    const result = await transcriber(float32, options);
     rawTranscript = (result.text || '').trim();
-    detectedLanguage = result.language || '';
+    detectedLanguage = result.language || (selectedLanguage !== 'auto' ? selectedLanguage : '');
     transcriptEl.textContent = rawTranscript || '(no speech detected)';
     if (detectedLanguage) {
       detectedLangEl.textContent = detectedLanguage;

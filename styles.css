@@ -138,6 +138,30 @@ main[hidden] {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.lang-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--on-surface-muted);
+  flex-wrap: wrap;
+}
+.lang-picker > span { margin-right: 4px; }
+.lang-option {
+  background: transparent !important;
+  color: var(--on-surface-muted) !important;
+  border: 1px solid var(--border) !important;
+  padding: 4px 12px !important;
+  font-size: 0.85rem !important;
+  border-radius: 16px !important;
+}
+.lang-option.active {
+  background: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
+}
 .card p {
   margin: 0;
   white-space: pre-wrap;
