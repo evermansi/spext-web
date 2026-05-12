@@ -15,6 +15,9 @@ const statusEl = document.getElementById('status');
 const micBtn = document.getElementById('micBtn');
 const micLabel = document.getElementById('micLabel');
 const transcriptEl = document.getElementById('transcript');
+const englishCard = document.getElementById('englishCard');
+const englishTranscriptEl = document.getElementById('englishTranscript');
+const detectedLangEl = document.getElementById('detectedLang');
 const saveBtn = document.getElementById('saveBtn');
 const notesToggleBtn = document.getElementById('notesToggleBtn');
 const recordView = document.getElementById('recordView');
@@ -47,6 +50,8 @@ let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let rawTranscript = '';
+let englishTranslation = '';
+let detectedLanguage = '';
 let currentNoteId = null;
 
 // ---- IndexedDB ----
@@ -176,11 +181,43 @@ async function onRecordingStopped() {
   const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
   const float32 = audioBuffer.getChannelData(0);
 
+  // Reset.
+  rawTranscript = '';
+  englishTranslation = '';
+  detectedLanguage = '';
+  englishCard.hidden = true;
+  detectedLangEl.hidden = true;
+  englishTranscriptEl.textContent = '';
+
   try {
-    // Omit `language` to let Whisper auto-detect from audio (supports German + English).
-    const result = await transcriber(float32, { task: 'transcribe' });
-    rawTranscript = (result.text || '').trim();
+    // Pass 1: transcribe in detected language (original)
+    micLabel.textContent = 'Transcribing… (1 of 2)';
+    const original = await transcriber(float32, {
+      task: 'transcribe',
+      return_language: true
+    });
+    rawTranscript = (original.text || '').trim();
+    detectedLanguage = original.language || '';
     transcriptEl.textContent = rawTranscript || '(no speech detected)';
+    if (detectedLanguage) {
+      detectedLangEl.textContent = detectedLanguage;
+      detectedLangEl.hidden = false;
+    }
+
+    // Pass 2: translate to English (skip if already English)
+    const looksEnglish = detectedLanguage.toLowerCase().startsWith('en');
+    if (rawTranscript && !looksEnglish) {
+      micLabel.textContent = 'Translating… (2 of 2)';
+      const translated = await transcriber(float32, { task: 'translate' });
+      englishTranslation = (translated.text || '').trim();
+      if (englishTranslation) {
+        englishTranscriptEl.textContent = englishTranslation;
+        englishCard.hidden = false;
+      }
+    } else if (looksEnglish) {
+      englishTranslation = rawTranscript;
+    }
+
     saveBtn.disabled = rawTranscript.length === 0;
   } catch (err) {
     transcriptEl.textContent = `Transcription failed: ${err.message}`;
@@ -201,9 +238,16 @@ saveBtn.addEventListener('click', async () => {
   const firstLine = rawTranscript.split('\n').find(l => l.trim()) || rawTranscript;
   const title = firstLine.slice(0, 60) || `Note ${Date.now()}`;
   const now = Date.now();
+  // Compose a single content blob with both languages for back-compat.
+  const composed = englishTranslation && englishTranslation !== rawTranscript
+    ? `${rawTranscript}\n\n--- English ---\n${englishTranslation}`
+    : rawTranscript;
   const id = await dbSave({
     title,
-    content: rawTranscript,
+    content: composed,
+    original: rawTranscript,
+    english: englishTranslation || null,
+    language: detectedLanguage || null,
     createdAt: now,
     updatedAt: now
   });
